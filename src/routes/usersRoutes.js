@@ -17,9 +17,6 @@ router.get("/", [auth.basicAuth], usersCtrl.getUsers)
 // anyone gets response (sensitive data is not exposed)
 router.get("/:userEmail", [auth.basicAuth], usersCtrl.getUserByEmail)
 
-// only the user can update his own data
-router.patch("/modAddres/:username", [auth.basicAuth], usersCtrl.updateAddress)
-
 // only admin can delete
 router.delete("/delete/:userId", [auth.basicAuth, auth.isAdmin], usersCtrl.deleteUserById)
 

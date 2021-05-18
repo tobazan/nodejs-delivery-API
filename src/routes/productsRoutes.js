@@ -5,6 +5,6 @@ const auth = require("../middlewares/auth")
 const productsCtrl = require("../controllers/productsController")
 
 // middleware check if admin
-router.post("/create", [auth.isAdmin, auth.basicAuth], productsCtrl.createProduct)
+router.post("/create", [auth.basicAuth, auth.isAdmin], productsCtrl.createProduct)
 
 module.exports = router;

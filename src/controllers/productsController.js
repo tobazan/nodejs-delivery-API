@@ -9,7 +9,7 @@ exports.createProduct = (req, res) => {
 
         const dup = data.find(prod => prod.product === product)
         if(dup) {
-            return res.status(400).json({ message: `${newProduct.product} already exists` })
+            return res.status(400).json({ message: `${product} already exists` })
         }
 
         const newProduct = {

@@ -3,17 +3,17 @@ const express = require('express')
 const app = express()
 
 const usersRoutes = require("./routes/usersRoutes")
-const productRoutes = require("./routes/productsRoutes")
-//import authRoutes from "./routes/auth.routes";
+const productsRoutes = require("./routes/productsRoutes")
+const payMethodsRoutes = require("./routes/payMethodsRoutes")
 
 
 app.use(express.json());
 
 // Routes
 app.use("/api/users", usersRoutes)
-app.use("/api/products", productRoutes)
+app.use("/api/products", productsRoutes)
 //app.use("/api/carts", authRoutes)
-//app.use("/api/payMethods", authRoutes)
+app.use("/api/payMethods", payMethodsRoutes)
 
 // Home route
 app.get('/', (req, res) => {
