@@ -9,10 +9,10 @@ const usersCtrl = require("../controllers/usersController")
 router.post("/signup", [verifySignup.checkDups], usersCtrl.createUser)
 
 // middleware check for credentials
-router.post("/login", [auth.basicAuth], usersCtrl.login)
+router.post("/login", usersCtrl.login)
 
 // list of all users registered
-router.get("/", [auth.basicAuth], usersCtrl.getUsers)
+router.get("/", [auth.basicAuth, auth.isAdmin], usersCtrl.getUsers)
 
 // anyone gets response (sensitive data is not exposed)
 router.get("/:userEmail", [auth.basicAuth], usersCtrl.getUserByEmail)

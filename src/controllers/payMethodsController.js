@@ -3,8 +3,13 @@ const file_path = './src/mocks/payMethods_mock.json'
 
 exports.createPayMethod = (req, res) => {
     try {
-        const { payMethod, isValid } = req.body
-        
+        const payMethod = req.body.payMethod
+        const isValid = req.body.isValid || false
+    
+        if(payMethod===undefined) {
+            return res.status(400).json(err)
+        }
+
         let data = JSON.parse(fs.readFileSync(file_path, 'utf8'))
 
         const dup = data.find(method => method.payMethod === payMethod)
@@ -15,14 +20,14 @@ exports.createPayMethod = (req, res) => {
         const newPayMethod = {
             id: (data.length + 1),
             payMethod: payMethod,
-            isValid: (typeof isValid === Boolean ? isValid : false)
+            isValid: isValid
         }
 
         data.push(newPayMethod)
 
         fs.writeFileSync(file_path, JSON.stringify(data), 'utf8')
         
-        return res.status(201).json({ message: `Agregaste ${payMethod}` })
+        return res.status(201).json({ message: `Successfully created ${payMethod}` })
     }
     catch(err) {
         return res.status(400).json(err)
@@ -72,14 +77,12 @@ exports.updatePayMethod = (req, res) => {
             return res.status(409).json({message:"method does not exists"})
         }
 
-        const { payMethod, isValid } = req.body
-
-        if(payMethod != undefined) {
-            method_data['payMethod'] = payMethod
+        if(req.body.payMethod != undefined) {
+            method_data['payMethod'] = req.body.payMethod
         } 
 
-        if(isValid != undefined) {
-            method_data['isValid'] = isValid
+        if(req.body.isValid != undefined) {
+            method_data['isValid'] = req.body.isValid
         }        
         
         data.splice(methodId - 1, 1, method_data)

@@ -4,7 +4,12 @@ const router = Router()
 const auth = require("../middlewares/auth")
 const productsCtrl = require("../controllers/productsController")
 
-// middleware check if admin
+router.get("/", [auth.basicAuth], productsCtrl.listProducts)
+
 router.post("/create", [auth.basicAuth, auth.isAdmin], productsCtrl.createProduct)
+
+router.delete("/delete/:prodId", [auth.basicAuth, auth.isAdmin], productsCtrl.deleteProduct)
+
+router.put("/update/:prodId", [auth.basicAuth, auth.isAdmin], productsCtrl.updateProduct)
 
 module.exports = router;

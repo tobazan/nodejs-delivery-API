@@ -8,6 +8,10 @@ exports.createUser = (req, res) => {
         
         let data = JSON.parse(fs.readFileSync(file_path, 'utf8'))
 
+        if(username===undefined || email===undefined || password===undefined) {
+            return res.status(400).json(err)
+        }
+
         const newUser = {
             id: (data.length + 1),
             username: username,
