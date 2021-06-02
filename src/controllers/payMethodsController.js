@@ -46,7 +46,7 @@ exports.listPayMethods = (req, res) => {
 }
 
 exports.deletePayMethod = (req, res) => {
-    const methodId = parseInt(req.params['methodId'])
+    const methodId = parseInt(req.query.methodId)
     try{
         const data = JSON.parse(fs.readFileSync(file_path, 'utf8'))
         const method_data = data.find(method => method.id === methodId)
@@ -68,7 +68,7 @@ exports.deletePayMethod = (req, res) => {
 
 exports.updatePayMethod = (req, res) => {
     try{
-        const methodId = parseInt(req.params['methodId'])
+        const methodId = parseInt(req.query.methodId)
 
         const data = JSON.parse(fs.readFileSync(file_path, 'utf8'))
         const method_data = data.find(method => method.id === methodId)

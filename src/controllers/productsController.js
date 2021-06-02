@@ -46,7 +46,7 @@ exports.createProduct = (req, res) => {
 }
 
 exports.deleteProduct = (req, res) => {
-    const prodId = parseInt(req.params['prodId'])
+    const prodId = parseInt(req.query.prodId)
     try{
         const data = JSON.parse(fs.readFileSync(file_path, 'utf8'))
         const prod_data = data.find(product => product.id === prodId)
@@ -68,7 +68,7 @@ exports.deleteProduct = (req, res) => {
 
 exports.updateProduct = (req, res) => {
     try{
-        const prodId = parseInt(req.params['prodId'])
+        const prodId = parseInt(req.query.prodId)
 
         const data = JSON.parse(fs.readFileSync(file_path, 'utf8'))
         const prod_data = data.find(prod => prod.id === prodId)

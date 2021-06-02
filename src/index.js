@@ -19,7 +19,7 @@ const options = {
 			},
 		],
 	},
-	apis: ["src/routes/*.js"],
+	apis: ["src/docs/*.js"],
 };
 
 const specs = swaggerJsDoc(options);
@@ -27,15 +27,16 @@ const specs = swaggerJsDoc(options);
 const usersRoutes = require("./routes/usersRoutes")
 const productsRoutes = require("./routes/productsRoutes")
 const payMethodsRoutes = require("./routes/payMethodsRoutes")
+const cartsRoutes = require("./routes/cartRoutes")
 
 const app = express()
 app.use(express.json())
+
 // Routes
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(specs))
-
 app.use("/api/users", usersRoutes)
 app.use("/api/products", productsRoutes)
-//app.use("/api/carts", authRoutes)
+app.use("/api/carts", cartsRoutes)
 app.use("/api/payMethods", payMethodsRoutes)
 
 app.listen(port,

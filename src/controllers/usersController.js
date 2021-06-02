@@ -62,7 +62,7 @@ exports.getUsers = (req, res) => {
 }
 
 exports.getUserByEmail = (req, res) => {
-    const userEmail = req.params['userEmail']
+    const userEmail = req.query.userEmail
 
     try{
         const data = JSON.parse(fs.readFileSync(file_path, 'utf8'))
@@ -86,7 +86,7 @@ exports.getUserByEmail = (req, res) => {
 }
 
 exports.deleteUserById = (req, res) => {
-    const userId = parseInt(req.params['userId'])
+    const userId = parseInt(req.query.userId)
     try{
         const data = JSON.parse(fs.readFileSync(file_path, 'utf8'))
         const user_data = data.find(user => user.id === userId)

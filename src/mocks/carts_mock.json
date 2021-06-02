@@ -2,25 +2,41 @@
     {
         "id": 1,
         "user": {
-            "id": 33
+            "id": 33,
+            "username": "dleggingw",
+            "name": "Durward Legging",
+            "email": "dleggingw@addthis.com",
+            "phone": "+86-774-862-1234",
+            "address": "55522 Ludington Road"
         },
         "products": [
             {
                 "id": 35,
+                "product": "Pork - Smoked Kassler",
+                "price": 632.93,
+                "image": "",
                 "qty": 1
             },
             {
                 "id": 39,
+                "product": "Wine - Red Oakridge Merlot",
+                "price": 193.98,
+                "image": "",
                 "qty": 2
             },
             {
                 "id": 34,
+                "product": "Bread - Pain Au Liat X12",
+                "price": 470.88,
+                "image": "",
                 "qty": 2
             }
         ],
         "total_price": 1962.65,        
         "payMethod": {
-            "id": 8
+            "id": 8,
+            "payMethod": "efectivo",
+            "isValid": true
         },
         "delivery_address": "79 Pleasure Parkway",
         "status": "RECEIVED"
@@ -28,25 +44,41 @@
     {
         "id": 2,
         "user": {
-            "id": 16
+            "id": 16,
+            "username": "sranklinf",
+            "name": "Sheelah Ranklin",
+            "email": "sranklinf@nih.gov",
+            "phone": "+62-544-732-4237",
+            "address": "496 Spaight Center"
         },
         "products": [
             {
                 "id": 36,
+                "product": "Pickerel - Fillets",
+                "price": 816.59,
+                "image": "",
                 "qty": 2
             },
             {
                 "id": 38,
+                "product": "Tuna - Fresh",
+                "price": 263.66,
+                "image": "",
                 "qty": 2
             },
             {
                 "id": 40,
+                "product": "Tea - Vanilla Chai",
+                "price": 469.88,
+                "image": "",
                 "qty": 1
             }
         ],
         "total_price": 2630.38,        
         "payMethod": {
-            "id": 2
+            "id": 2,
+            "payMethod": "master_macro",
+            "isValid": true
         },
         "delivery_address": "496 Spaight Center",
         "status": "SENT"
