@@ -29,7 +29,7 @@
 *           type: float
 *           description: Unit price
 *         image:
-*           type: str
+*           type: string
 *           description: URL for product image
 *       example:
 *         id: 3

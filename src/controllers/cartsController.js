@@ -135,7 +135,7 @@ exports.updateCartItems = (req, res) => {
         carts_data.splice(cart_id - 1, 1, cart)
         fs.writeFileSync(carts_path, JSON.stringify(carts_data), 'utf8')
 
-        return res.status(202).json({message:"delivery address successfully updated"})
+        return res.status(202).json({message:"cart items successfully updated"})
     }
     catch(err){
         return res.status(400).json(err)
@@ -148,12 +148,12 @@ exports.updateDeliveryAddress = (req, res) => {
         const cart_id = parseInt(req.query.cart_id)
         let cart = carts_data.find(c => c.id === cart_id) 
 
-        if(cart['status'] != "OPEN"){
-            return res.status(401).json({message:"unauthorized to edit this cart"})
-        }
-
         if(cart === undefined){
             return res.status(409).json({message:"cart not found"})
+        }
+
+        if(cart['status'] != "OPEN"){
+            return res.status(401).json({message:"unauthorized to edit this cart"})
         }
 
         if(req.body.address != undefined){
@@ -174,6 +174,7 @@ exports.updateDeliveryAddress = (req, res) => {
 
 exports.updatePaymentMethod = (req, res) => {
     try{
+        const payMethods_data = JSON.parse(fs.readFileSync(payMethods_path, 'utf8')) 
         const carts_data = JSON.parse(fs.readFileSync(carts_path, 'utf8'))
         const cart_id = parseInt(req.query.cart_id)
         let cart = carts_data.find(c => c.id === cart_id) 
@@ -186,8 +187,10 @@ exports.updatePaymentMethod = (req, res) => {
             return res.status(409).json({message:"cart not found"})
         }
 
-        if(req.body.payMethod != undefined){
-            cart['payMethod'] = req.body.payMethod
+        if(req.body.payMethod_id != undefined){
+            const method_id = parseInt(req.body.payMethod_id)
+            const newMethod = payMethods_data.find(m => m.id === method_id)
+            cart['payMethod'] = newMethod
         } else {
             res.status(400).json({message:"bad request"})
         }
@@ -209,7 +212,7 @@ exports.confirmCart = (req, res) => {
         let cart = carts_data.find(c => c.id === cart_id) 
 
         if(cart['status'] != "OPEN"){
-            return res.status(409).json({message:"cart already confirmed", cart_satus: cart['status']})
+            return res.status(401).json({message:"cart already confirmed", cart_satus: cart['status']})
         }
 
         if(cart === undefined){

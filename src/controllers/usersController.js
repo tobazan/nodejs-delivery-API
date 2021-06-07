@@ -84,24 +84,3 @@ exports.getUserByEmail = (req, res) => {
         return res.status(400).json(err)
     }
 }
-
-exports.deleteUserById = (req, res) => {
-    const userId = parseInt(req.query.userId)
-    try{
-        const data = JSON.parse(fs.readFileSync(file_path, 'utf8'))
-        const user_data = data.find(user => user.id === userId)
-
-        if(user_data === undefined){
-            return res.status(409).json({message:"user does not exists"})
-        }
-
-        data.splice(userId - 1, 1)
-
-        fs.writeFileSync(file_path, JSON.stringify(data), 'utf8')
-        
-        return res.status(202).json({user:user_data.username, message:"user deleted"})
-    }
-    catch(err) {
-        return res.status(400).json(err)
-    }
-}

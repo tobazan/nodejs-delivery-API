@@ -17,7 +17,4 @@ router.get("/", [auth.basicAuth, auth.isAdmin], usersCtrl.getUsers)
 // anyone gets response (sensitive data is not exposed)
 router.get("/:userEmail", [auth.basicAuth], usersCtrl.getUserByEmail)
 
-// only admin can delete
-router.delete("/delete/:userId", [auth.basicAuth, auth.isAdmin], usersCtrl.deleteUserById)
-
 module.exports = router;
