@@ -6,10 +6,10 @@ const productsCtrl = require("../controllers/productsController")
 
 router.get("/", [auth.basicAuth], productsCtrl.listProducts)
 
-router.post("/create", [auth.basicAuth, auth.isAdmin], productsCtrl.createProduct)
+router.post("/", [auth.basicAuth, auth.isAdmin], productsCtrl.createProduct)
 
-router.delete("/delete/:prodId", [auth.basicAuth, auth.isAdmin], productsCtrl.deleteProduct)
+router.delete("/:prodId", [auth.basicAuth, auth.isAdmin], productsCtrl.deleteProduct)
 
-router.put("/update/:prodId", [auth.basicAuth, auth.isAdmin], productsCtrl.updateProduct)
+router.put("/:prodId", [auth.basicAuth, auth.isAdmin], productsCtrl.updateProduct)
 
 module.exports = router;
