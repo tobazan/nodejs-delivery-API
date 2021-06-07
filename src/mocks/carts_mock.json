@@ -2,235 +2,83 @@
     {
         "id": 1,
         "user": {
-            "id": 33,
-            "username": "dleggingw",
-            "name": "Durward Legging",
-            "email": "dleggingw@addthis.com",
-            "phone": "+86-774-862-1234",
-            "address": "55522 Ludington Road"
+            "id": 5,
+            "username": "aedwardes4",
+            "name": "Amalita Edwardes",
+            "email": "aedwardes4@pinterest.com",
+            "phone": "+48-723-447-0710",
+            "address": "95691 Manley Trail",
+            "password": "G0cE0U",
+            "isAdmin": false
         },
         "products": [
             {
-                "id": 35,
-                "product": "Pork - Smoked Kassler",
-                "price": 632.93,
-                "image": "",
-                "qty": 1
+                "id": 1,
+                "product": "Wine - Penfolds Koonuga Hill",
+                "price": 879.7,
+                "image": ""
             },
             {
-                "id": 39,
-                "product": "Wine - Red Oakridge Merlot",
-                "price": 193.98,
-                "image": "",
-                "qty": 2
+                "id": 5,
+                "product": "Pasta - Lasagna Noodle, Frozen",
+                "price": 689.56,
+                "image": ""
             },
             {
-                "id": 34,
-                "product": "Bread - Pain Au Liat X12",
-                "price": 470.88,
-                "image": "",
-                "qty": 2
+                "id": 6,
+                "product": "Garlic",
+                "price": 83.62,
+                "image": ""
             }
         ],
-        "total_price": 1962.65,        
+        "total_price": 1652.88,
         "payMethod": {
             "id": 8,
             "payMethod": "efectivo",
             "isValid": true
         },
-        "delivery_address": "79 Pleasure Parkway",
-        "status": "RECEIVED"
+        "delivery_address": "95691 Manley Trail",
+        "status": "OPEN"
     },
     {
         "id": 2,
         "user": {
-            "id": 16,
-            "username": "sranklinf",
-            "name": "Sheelah Ranklin",
-            "email": "sranklinf@nih.gov",
-            "phone": "+62-544-732-4237",
-            "address": "496 Spaight Center"
-        },
-        "products": [
-            {
-                "id": 36,
-                "product": "Pickerel - Fillets",
-                "price": 816.59,
-                "image": "",
-                "qty": 2
-            },
-            {
-                "id": 38,
-                "product": "Tuna - Fresh",
-                "price": 263.66,
-                "image": "",
-                "qty": 2
-            },
-            {
-                "id": 40,
-                "product": "Tea - Vanilla Chai",
-                "price": 469.88,
-                "image": "",
-                "qty": 1
-            }
-        ],
-        "total_price": 2630.38,        
-        "payMethod": {
-            "id": 2,
-            "payMethod": "master_macro",
-            "isValid": true
-        },
-        "delivery_address": "496 Spaight Center",
-        "status": "SENT"
-    },
-    {
-        "id": 3,
-        "user": {
-            "id": 43
+            "id": 7,
+            "username": "kdorcey6",
+            "name": "Kerwinn Dorcey",
+            "email": "kdorcey6@home.pl",
+            "phone": "+86-844-230-0043",
+            "address": "6 Hollow Ridge Crossing",
+            "password": "FAsQg5K2",
+            "isAdmin": false
         },
         "products": [
             {
                 "id": 4,
-                "qty": 2
-            }
-        ],
-        "total_price": 718.46,        
-        "payMethod": {
-            "id": 1
-        },
-        "delivery_address": "282 Nobel Drive",
-        "status": "SENT"
-    },
-    {
-        "id": 4,
-        "user": {
-            "id": 41
-        },
-        "products": [
-            {
-                "id": 6,
-                "qty": 1
+                "product": "Cake - Mini Potato Pancake",
+                "price": 359.23,
+                "image": ""
             },
             {
-                "id": 7,
-                "qty": 1
+                "id": 4,
+                "product": "Cake - Mini Potato Pancake",
+                "price": 359.23,
+                "image": ""
             },
-            {
-                "id": 3,
-                "qty": 1
-            }
-        ],
-        "total_price": 4673.25,        
-        "payMethod": {
-            "id": 4
-        },
-        "delivery_address": "2892 North Place",
-        "status": "RECEIVED"
-    },
-    {
-        "id": 5,
-        "user": {
-            "id": 5
-        },
-        "products": [
-            {
-                "id": 13,
-                "qty": 1
-            },
-            {
-                "id": 11,
-                "qty": 4
-            }
-        ],
-        "total_price": 1740.69,        
-        "payMethod": {
-            "id": 3
-        },
-        "delivery_address": "95691 Manley Trail",
-        "status": "PROCESSING"
-    },
-    {
-        "id": 6,
-        "user": {
-            "id": 8
-        },
-        "products": [
-            {
-                "id": 24,
-                "qty": 2
-            }
-        ],
-        "total_price": 1588.36,        
-        "payMethod": {
-            "id": 5
-        },
-        "delivery_address": "1800 Bowman Street",
-        "status": "PROCESSING"
-    },
-    {
-        "id": 7,
-        "user": {
-            "id": 18
-        },
-        "products": [
             {
                 "id": 20,
-                "qty": 1
-            },
-            {
-                "id": 25,
-                "qty": 1
-            },
-            {
-                "id": 4,
-                "qty": 2
+                "product": "Dried Peach",
+                "price": 571.47,
+                "image": ""
             }
         ],
-        "total_price": 2215.21,        
+        "total_price": 1289.93,
         "payMethod": {
-            "id": 9
+            "id": 8,
+            "payMethod": "efectivo",
+            "isValid": true
         },
-        "delivery_address": "1 Vera Drive",
-        "status": "CONFIRMED"
-    },
-    {
-        "id": 8,
-        "user": {
-            "id": 33
-        },
-        "products": [
-            {
-                "id": 28,
-                "qty": 2
-            },
-            {
-                "id": 30,
-                "qty": 1
-            }
-        ],
-        "total_price": 1252.64,        
-        "payMethod": {
-            "id": ""
-        },
-        "delivery_address": "",
+        "delivery_address": "6 Hollow Ridge Crossing",
         "status": "OPEN"
-    },
-    {
-        "id": 9,
-        "user": {
-            "id": 23
-        },
-        "products": [
-            {
-                "id": 32,
-                "qty": 1
-            }
-        ],
-        "total_price": 395.87,        
-        "payMethod": {
-            "id": ""
-        },
-        "delivery_address": "",
-        "status": "CANCELLED"
     }
 ]

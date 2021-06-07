@@ -77,16 +77,14 @@ exports.updatePayMethod = (req, res) => {
             return res.status(409).json({message:"method does not exists"})
         }
 
-        if(req.body.payMethod != undefined) {
+        if(req.body.payMethod != undefined && req.body.isValid != undefined) {
             method_data['payMethod'] = req.body.payMethod
-        } 
-
-        if(req.body.isValid != undefined) {
             method_data['isValid'] = req.body.isValid
-        }        
-        
-        data.splice(methodId - 1, 1, method_data)
+        } else {
+            res.status(400).json({message:"bad request"})
+        }
 
+        data.splice(methodId - 1, 1, method_data)
         fs.writeFileSync(file_path, JSON.stringify(data), 'utf8')
             
         return res.status(202).json({method:method_data.payMethod, message:"succesfully updated"})

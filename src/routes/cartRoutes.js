@@ -4,55 +4,28 @@ const router = Router()
 const auth = require("../middlewares/auth")
 const cartsCtrl = require("../controllers/cartsController")
 
-/**
- * @swagger
- * components:
- *   securitySchemes:
- *     basicAuth:
- *      type: http
- *      description: b64Auth
- *      scheme: basic
- *      in: header
- */
- /**
-  * @swagger
-  * tags:
-  *   name: Carts
-  *   description: Every cart ever created
-  */
-/**
- * @swagger
- * paths:
- *   /api/carts/{userEmail}:
- *     get:
- *       security:
- *        - basicAuth: []
- *       summary: Gets every cart from a given user
- *       tags: [Carts]
- *       parameters:
- *        - in: query
- *          name: userEmail
- *          schema:
- *           type: string
- *          description: User requesting all his/her carts
- *       responses:
- *         200:
- *           description: Success
- *         401:
- *           description: Unauthorized
- *         400:
- *           description: Bad request
- */
+// for users to get their own carts
 router.get("/:userEmail", [auth.basicAuth], cartsCtrl.getCartsByEmail)
 
-// router.post("/create", [auth.basicAuth], cartsCtrl.createPayMethod)
+// for admins to get every cart
+router.get("/", [auth.basicAuth, auth.isAdmin], cartsCtrl.getCarts)
 
-// router.delete("/delete/:methodId", 
-//         [auth.basicAuth], 
-//         cartsCtrl.)
+// for users to create a cart
+router.post("/", [auth.basicAuth], cartsCtrl.createCart)
 
-// router.put("/update/:methodId", 
-//         [auth.basicAuth], 
-//         cartsCtrl.)
+// for users to add or remove items from cart
+router.put("/:cart_id", [auth.basicAuth], cartsCtrl.updateCartItems)
+
+// for users to modify delivery address
+router.patch("/deli_address/:cart_id", [auth.basicAuth], cartsCtrl.updateDeliveryAddress)
+
+// for users to modify payment method
+router.patch("/payment/:cart_id", [auth.basicAuth], cartsCtrl.updatePaymentMethod)
+
+// for users to confirm a cart
+router.patch("/checkOut/:cart_id", [auth.basicAuth], cartsCtrl.confirmCart)
+
+// for admins to modify cart status
+router.patch("/:cart_id", [auth.basicAuth, auth.isAdmin], cartsCtrl.updateCartStatus)
 
 module.exports = router;
