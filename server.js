@@ -1,5 +1,6 @@
 const express = require('express')
 const { db } = require('./models/index')
+require('./models/associations')
 
 const helmet = require('helmet')
 
@@ -40,8 +41,8 @@ app.use(express.json())
 app.use(helmet())
 
 // Routes
-app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(specs))
-// app.use("/api/users", usersRoutes)
+app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs))
+app.use("/api/users", usersRoutes)
 // app.use("/api/products", productsRoutes)
 // app.use("/api/carts", cartsRoutes)
 // app.use("/api/payMethods", payMethodsRoutes)
