@@ -4,7 +4,7 @@
   "description": "API e-com para local de comidas",
   "main": "server.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "mocha tests/test.js",
     "dev": "nodemon .server.js",
     "start": "node .server.js"
   },
@@ -23,12 +23,15 @@
     "jsonwebtoken": "^8.5.1",
     "pg": "^8.6.0",
     "pg-hstore": "^2.3.4",
+    "redis": "^3.1.2",
     "sequelize": "^6.6.5",
     "swagger-jsdoc": "^6.0.1",
     "swagger-ui-express": "^4.1.6"
   },
   "devDependencies": {
+    "mocha": "^9.0.3",
     "nodemon": "^2.0.7",
-    "sequelize-cli": "^6.2.0"
+    "sequelize-cli": "^6.2.0",
+    "supertest": "^6.1.4"
   }
 }

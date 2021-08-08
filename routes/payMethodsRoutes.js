@@ -1,23 +1,19 @@
-// const { Router } = require('express')
-// const router = Router()
+const { Router } = require('express')
+const router = Router()
 
-// const auth = require("../middlewares/auth")
-// const payMethodsCtrl = require("../controllers/payMethodsController")
+const auth = require("../middlewares/auth")
+const payMethodsCtrl = require("../controllers/payMethodsController")
 
-// router.post("/create", 
-//         [auth.basicAuth, auth.isAdmin],
-//         payMethodsCtrl.createPayMethod)
+// FOR ADMINS TO CREATE NEW PAY METHODS
+router.post("/create", [auth.authenticateToken, auth.isAdmin], payMethodsCtrl.createPayMethod)
 
-// router.get("/", 
-//         [auth.basicAuth, auth.isAdmin], 
-//         payMethodsCtrl.listPayMethods)
+// FOR ANYONE TO LIST PAY METHODS
+router.get("/", [auth.authenticateToken], payMethodsCtrl.listPayMethods)
 
-// router.delete("/:methodId", 
-//         [auth.basicAuth, auth.isAdmin], 
-//         payMethodsCtrl.deletePayMethod)
+// FOR ADMINS TO DELETE PAY METHODS
+router.delete("/", [auth.authenticateToken, auth.isAdmin], payMethodsCtrl.deletePayMethod)
 
-// router.put("/:methodId", 
-//         [auth.basicAuth, auth.isAdmin], 
-//         payMethodsCtrl.updatePayMethod)
+// FOR ADMINS TO EDIT PAY METHODS
+router.put("/", [auth.authenticateToken, auth.isAdmin], payMethodsCtrl.updatePayMethod)
 
-// module.exports = router;
+module.exports = router;

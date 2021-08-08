@@ -1,101 +1,133 @@
-// const fs = require('fs')
-// const file_path = './src/mocks/products_mock.json'
+const { Product } = require('../models/product')
+const {ValidationError} = require('sequelize')
+const redis = require('redis')
+const client = redis.createClient()
 
-// exports.listProducts = (req, res) => {
-//     try {    
-//         let data = JSON.parse(fs.readFileSync(file_path, 'utf8'))
-        
-//         return res.status(200).json(data)
-//     }
-//     catch(err) {
-//         return res.status(400).json(err)
-//     }
-// }
+exports.listProducts = async (req, res) => {
 
-// exports.createProduct = (req, res) => {
-//     try {
-//         const { product, price, image } = req.body
-        
-//         let data = JSON.parse(fs.readFileSync(file_path, 'utf8'))
+    try {
+        client.get('cached_prods', async (err, prods) => {
+            if (err) throw err
+    
+            if (prods) {
+                console.log('Got products catalogue from cache layer')
+                res.status(200).json(JSON.parse(prods))
+            } else {
 
-//         const dup = data.find(prod => prod.product === product)
-//         if(dup) {
-//             return res.status(400).json({ message: `${product} already exists` })
-//         }
+                await Product.findAll()
+                    .then( products => {
+                        try{
+                            client.setex('cached_prods', 3600, JSON.stringify(products))
+                            console.log('Saved products catalogue on cache layer')
+                        }catch(err){
+                            return res.status(500).json({msg:"Could not save on cache layer"})
+                        }
+                        res.status(200).json(products)
+                    })
+                    .catch (err => {
+                        return res.status(500).json(err)
+                    })
+            }
+        }) 
+    } catch(error) {
+        res.status(500).json(error)
+    }
+}
 
-//         if(product === undefined || price === undefined){
-//             return res.status(400).json(err)
-//         }
+exports.createProduct = async (req, res) => {
 
-//         const newProduct = {
-//             id: (data.length + 1),
-//             product: product,
-//             price: parseFloat(price),
-//             image: image
-//         }
-
-//         data.push(newProduct)
-
-//         fs.writeFileSync(file_path, JSON.stringify(data), 'utf8')
-        
-//         return res.status(201).json({ message: `Creado ${newProduct.product}` })
-//     }
-//     catch(err) {
-//         return res.status(400).json(err)
-//     }
-// }
-
-// exports.deleteProduct = (req, res) => {
-//     const prodId = parseInt(req.query.prodId)
-//     try{
-//         const data = JSON.parse(fs.readFileSync(file_path, 'utf8'))
-//         const prod_data = data.find(product => product.id === prodId)
-
-//         if(prod_data === undefined){
-//             return res.status(409).json({message:"there is not such product"})
-//         }
-
-//         data.splice(prodId - 1, 1)
-
-//         fs.writeFileSync(file_path, JSON.stringify(data), 'utf8')
-        
-//         return res.status(202).json({product:prod_data.product, message:"successfully deleted"})
-//     }
-//     catch(err) {
-//         return res.status(400).json(err)
-//     }
-// }
-
-// exports.updateProduct = (req, res) => {
-//     try{
-//         const prodId = parseInt(req.query.prodId)
-
-//         const data = JSON.parse(fs.readFileSync(file_path, 'utf8'))
-//         const prod_data = data.find(prod => prod.id === prodId)
-
-//         if(prod_data === undefined){
-//             return res.status(409).json({message:"product does not exists"})
-//         }
-
-//         if(req.body.product != undefined) {
-//             prod_data['product'] = req.body.product
-//         } 
-
-//         if(req.body.price != undefined) {
-//             prod_data['price'] = parseFloat(req.body.price)
-//         } 
-
-//         if(req.body.image != undefined) {
-//             prod_data['image'] = req.body.image
-//         }        
-        
-//         data.splice(prodId - 1, 1, prod_data)
-
-//         fs.writeFileSync(file_path, JSON.stringify(data), 'utf8')
+    await Product.create({
+        name: req.body.name,
+        price: req.body.price
+        })
+        .then(async p => {
+            // update cache layer
+            await Product.findAll()
+                .then( products => {
+                    try{
+                        client.setex('cached_prods', 3600, JSON.stringify(products))
+                        console.log('products catalogue on cache layer were updated')
+                    }catch(err){
+                        console.log("Could not update cache layer")
+                    }
+                })
+                .catch (err => {
+                    return res.status(500).json(err)
+                })
             
-//         return res.status(202).json({product:prod_data.product, message:"succesfully updated"})
-//     }
-//     catch(err) {
-//         return res.status(400).json(err)
-//     }
-// }
+            // response
+            res.status(201).json({
+                product: p.name,
+                message: "Product successfully created"
+            })
+        })
+        .catch(err => {
+            if(err instanceof ValidationError) {
+                res.status(400).json({ msg:"Bad Request", error:err })
+            }
+            res.status(500).json(err)
+        })
+}
+
+exports.deleteProduct = async (req, res) => {
+    
+    await Product.destroy({
+        where: { id: req.query.prodId }
+        })
+        .then(async p => {
+            // update cache layer
+            await Product.findAll()
+                .then( products => {
+                    try{
+                        client.setex('cached_prods', 3600, JSON.stringify(products))
+                        console.log('products catalogue on cache layer were updated')
+                    }catch(err){
+                        console.log("Could not update cache layer")
+                    }
+                })
+                .catch (err => {
+                    return res.status(500).json(err)
+                })
+            // response
+            res.status(202).json({
+                product: p.name,
+                message: "successfully deleted"})
+        })
+        .catch(err => {
+            res.status(500).json(err)
+        })
+}
+
+exports.updateProduct = async (req, res) => {
+    
+    await Product.update({ 
+        name: req.body.name,
+        price: req.body.price
+    },{
+        where: { id: req.query.prodId }
+    })
+      .then(async p => {
+        // update cache layer
+        await Product.findAll()
+        .then( products => {
+            try{
+                client.setex('cached_prods', 3600, JSON.stringify(products))
+                console.log('products catalogue on cache layer were updated')
+            }catch(err){
+                console.log("Could not update cache layer")
+            }
+        })
+        .catch (err => {
+            return res.status(500).json(err)
+        })
+        // response
+        res.status(200).json({
+            product: p.id,
+            message:"Successfully updated"})
+      })
+      .catch(err => {
+        res.status(500).json(err)
+      })
+}
+
+exports.redis_client = client

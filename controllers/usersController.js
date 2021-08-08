@@ -1,5 +1,6 @@
 const { User } = require('../models/user')
 const { Address } = require('../models/address')
+const {ValidationError} = require('sequelize')
 
 var bcrypt = require("bcrypt")
 var jwt = require("jsonwebtoken")
@@ -21,6 +22,9 @@ exports.registerUser = async (req, res) => {
             })
         })
         .catch(err => {
+            if(err instanceof ValidationError) {
+                res.status(400).json({ msg:"Bad Request", error:err })
+            }
             res.status(500).json(err)
         })
 }
@@ -69,7 +73,7 @@ exports.getUsers = async (req, res) => {
     await User.findAll().then(
         users => {res.status(200).json(users) }
     ).catch (err => {
-        return res.status(400).json(err)
+        return res.status(500).json(err)
     })
 }
 
@@ -121,7 +125,7 @@ exports.addAddress = async (req, res) => {
 }
 
 exports.banUserByUsername = async (req, res) => {
-    console.log(req.query.username)
+    
     await User.update({ isActive: false }, {
         where: { username: req.query.username }
     })
@@ -136,6 +140,7 @@ exports.banUserByUsername = async (req, res) => {
 }
 
 exports.restoreUserByUsername = async (req, res) => {
+    
     await User.update({ isActive: true }, {
         where: { username: req.query.username }
     })

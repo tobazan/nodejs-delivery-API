@@ -12,7 +12,7 @@ exports.checkDups = async (req, res, next) => {
     })
 
     if(dup){
-        return res.status(400).json({ message: "The user or email already exists" })
+        return res.status(409).json({ message: "The user or email already exists" })
     }
     next()
 }

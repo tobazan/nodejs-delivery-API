@@ -1,24 +1,40 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
-module.exports = (sequelize, DataTypes) => {
-  class PayMethod extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
-    static associate(models) {
-      // define association here
+const { Sequelize } = require('sequelize')
+const { db } = require('../models/index')
+
+const PayMethod = db.define('PayMethods', {
+    id: {
+      allowNull: false,
+      autoIncrement: true,
+      primaryKey: true,
+      type: Sequelize.INTEGER
+    },
+    name: {
+      type: Sequelize.STRING,
+      allowNull: false,
+      unique: true,
+      validate: {
+        len: {
+          args: [2, 128],
+          msg: "PayMethod 'name' debe tener minimamente de dos caracters"
+        }
+      }
+    },
+    isValid: {
+      type: Sequelize.BOOLEAN,
+      allowNull: false
+    },
+    createdAt: {
+      allowNull: false,
+      type: Sequelize.DATE
+    },
+    updatedAt: {
+      allowNull: false,
+      type: Sequelize.DATE
     }
-  };
-  PayMethod.init({
-    name: DataTypes.STRING,
-    isValid: DataTypes.BOOLEAN
-  }, {
-    sequelize,
-    modelName: 'PayMethod',
-  });
-  return PayMethod;
-};
+}, {
+    tableName: 'PayMethods'    
+}, {
+    timestamps: true    
+})
+
+exports.PayMethod = PayMethod
