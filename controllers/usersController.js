@@ -4,7 +4,6 @@ const { Address } = require('../models/address')
 var bcrypt = require("bcrypt")
 var jwt = require("jsonwebtoken")
 const JWT_SEC = process.env.JWT_SECRET
-const JWT_EXP = process.env.JWT_EXPIRATION
 
 exports.registerUser = async (req, res) => {
 
@@ -119,4 +118,33 @@ exports.addAddress = async (req, res) => {
     }).catch (err => {
         res.status(500).json(err)
     })
+}
+
+exports.banUserByUsername = async (req, res) => {
+    console.log(req.query.username)
+    await User.update({ isActive: false }, {
+        where: { username: req.query.username }
+    })
+      .then(u => {
+        res.status(200).json({
+            user: u,
+            message:"Successfully banned"})
+      })
+      .catch(err => {
+        res.status(500).json(err)
+      })
+}
+
+exports.restoreUserByUsername = async (req, res) => {
+    await User.update({ isActive: true }, {
+        where: { username: req.query.username }
+    })
+      .then(u => {
+        res.status(200).json({
+            user: u,
+            message:"Permissions restored"})
+      })
+      .catch(err => {
+        res.status(500).json(err)
+      })
 }

@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken')
 const JWT_SEC = process.env.JWT_SECRET
+const { User } = require('../models/user')
 
 exports.authenticateToken = (req, res, next) => {
   
@@ -15,7 +16,27 @@ exports.authenticateToken = (req, res, next) => {
         return res.status(403).json(error)
     }
     req.user = user
-    console.log(user)
+    console.log(req.user)
     next()
   })
+}
+
+exports.isAdmin = async (req, res, next) => {
+  
+  user = req.user
+  
+  await User.findOne({
+    where: {id: user.id}
+  })
+    .then(u => {
+      if(u.isAdmin){
+        next()
+      }
+      else{
+        return res.status(401).json({error:"Only admins allowed"})
+      }
+    })
+    .catch(err => {
+      return res.status(500).json(err)
+    })
 }
