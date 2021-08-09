@@ -12,7 +12,7 @@ module.exports = {
         type: Sequelize.FLOAT
       },
       status: {
-        type: Sequelize.STRING
+        type: Sequelize.ENUM('NUEVO', 'CONFIRMADO','PREPARACION','ENVIADO','ENTREGADO','CANCELADO')
       },
       createdAt: {
         allowNull: false,

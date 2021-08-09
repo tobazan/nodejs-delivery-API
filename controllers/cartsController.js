@@ -1,46 +1,38 @@
-// const fs = require('fs')
-// const users_path = './src/mocks/users_mock.json'
-// const payMethods_path = './src/mocks/payMethods_mock.json'
-// const products_path = './src/mocks/products_mock.json'
-// const carts_path = './src/mocks/carts_mock.json'
+const { User } = require('../models/user')
+const { Address } = require('../models/address')
+const { Product } = require('../models/product')
+const { PayMethod } = require('../models/paymethod')
+const { Cart } = require('../models/cart')
+const { CartItem } = require('../models/cart_item')
 
-// exports.getCartsByEmail = (req, res) => {
+exports.getCartsByEmail = async (req, res) => {
 
-//     try{
-//         const b64Credentials = req.headers.authorization.split(' ')[1]
-//         const credentials = Buffer.from(b64Credentials, 'base64').toString('ascii')
-//         const [_username, _password] = credentials.split(':')
+    await Cart.findAll({
+        include: [{
+            model: CartItem
+        },{
+            model: User,
+            where: {email: req.query.userEmail}
+        }]
+    }).then(c => {
+        res.status(200).json(c) 
+    }).catch (err => {
+        res.status(500).json(err)
+    })
+}
+
+exports.getCarts = async (req, res) => {
     
-//         const users_data = JSON.parse(fs.readFileSync(users_path, 'utf8'))
-//         const user = users_data.find(u => u.username === _username && u.email === req.query.userEmail)
-    
-//         if(user === undefined){
-//             return res.status(401).json({
-//                         message: "Credentials doesn't match email in order to get carts"})
-//         }
-
-//         const carts_data = JSON.parse(fs.readFileSync(carts_path, 'utf8'))
-        
-//         let userCarts = carts_data.filter(c => c.user.id === user.id) 
-        
-//         return res.status(200).json(userCarts)
-//     }
-//     catch(err){
-//         return res.status(400).json(err)
-//     }
-// }
-
-// exports.getCarts = (req, res) => {
-
-//     try{
-//         const carts_data = JSON.parse(fs.readFileSync(carts_path, 'utf8'))
-
-//         return res.status(200).json(carts_data)
-//     }
-//     catch(err){
-//         return res.status(400).json(err)
-//     }
-// }
+    await Cart.findAll({
+        include: [{
+            model: CartItem
+        }]
+    }).then(c => {
+        res.status(200).json(c) 
+    }).catch (err => {
+        res.status(500).json(err)
+    })
+}
 
 // exports.createCart = (req, res) => {
 //     try{

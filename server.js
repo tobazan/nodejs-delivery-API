@@ -32,7 +32,7 @@ const specs = swaggerJsDoc(options);
 const usersRoutes = require("./routes/usersRoutes")
 const productsRoutes = require("./routes/productsRoutes")
 const payMethodsRoutes = require("./routes/payMethodsRoutes")
-// const cartsRoutes = require("./routes/cartRoutes")
+const cartsRoutes = require("./routes/cartRoutes")
 
 const app = express()
 
@@ -45,20 +45,18 @@ app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(specs))
 app.use("/api/users", usersRoutes)
 app.use("/api/products", productsRoutes)
 app.use("/api/payMethods", payMethodsRoutes)
-// app.use("/api/carts", cartsRoutes)
+app.use("/api/carts", cartsRoutes)
 
 
 app.listen(port, async () => {
+	
 	console.log(`Server escuchando en puerto http://localhost:${port}/api-docs`)
 	
 	try {
-		
 		await db.authenticate()
 		console.log('Conectado a BD exitosamente')
-
 	}catch (error) {
-		console.error('No pudo conectarse a la BD: ', error)
-	}
+		console.error('No pudo conectarse a la BD: ', error)}
 })
 
 module.exports = app

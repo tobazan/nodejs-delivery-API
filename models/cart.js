@@ -1,24 +1,44 @@
-'use strict';
-const {
-  Model
-} = require('sequelize');
-module.exports = (sequelize, DataTypes) => {
-  class Cart extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
-    static associate(models) {
-      // define association here
+const { Sequelize } = require('sequelize')
+const { db } = require('../models/index')
+
+const Cart = db.define('Carts', {
+  id: {
+    allowNull: false,
+    autoIncrement: true,
+    primaryKey: true,
+    type: Sequelize.INTEGER
+  },
+  user_id:{
+    type: Sequelize.INTEGER,
+  },
+  address_id:{
+    type: Sequelize.INTEGER,
+  },
+  payMethod_id: {
+    type: Sequelize.INTEGER,
+  },
+  total_price: {
+    type: Sequelize.FLOAT,
+    allowNull: false,
+    validate: {
+      min: 0
     }
-  };
-  Cart.init({
-    total_price: DataTypes.FLOAT,
-    status: DataTypes.STRING
-  }, {
-    sequelize,
-    modelName: 'Cart',
-  });
-  return Cart;
-};
+  },
+  status: {
+    type: Sequelize.ENUM('NUEVO', 'CONFIRMADO','PREPARACION','ENVIADO','ENTREGADO','CANCELADO')
+  },
+  createdAt: {
+    allowNull: false,
+    type: Sequelize.DATE
+  },
+  updatedAt: {
+    allowNull: false,
+    type: Sequelize.DATE
+  }
+}, {
+  tableName: 'Carts'    
+}, {
+  timestamps: true    
+})
+
+exports.Cart = Cart
