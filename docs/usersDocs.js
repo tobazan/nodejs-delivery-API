@@ -2,11 +2,10 @@
 * @swagger
 * components:
 *   securitySchemes:
-*     basicAuth:
+*     bearerAuth:
 *      type: http
-*      description: b64Auth
-*      scheme: basic
-*      in: header
+*      scheme: bearer
+*      bearerFormat: JWT
 */
 
 /**
@@ -17,37 +16,37 @@
 *       type: object
 *       required:
 *         - username
-*         - name
-*         - email
-*         - phone
-*         - address
 *         - password
+*         - email
+*         - name
+*         - phone
 *       properties:
 *         id:
 *           type: integer
 *         username:
 *           type: string
-*         name:
+*         password:
 *           type: string
 *         email:
 *           type: string
+*         name:
+*           type: string
 *         phone:
-*           type: string
-*         address:
-*           type: string
-*         password:
 *           type: string
 *         isAdmin:
 *           type: boolean
 *           default: false
+*         isActive:
+*           type: boolean
+*           default: true
 *       example:
 *         id: 41
 *         username: kwozencroft14
-*         name: Kyle Wozencroft
-*         email: kwozencroft14@dailymotion.com
-*         phone: +86-727-335-3913
-*         address: 2892 North Place
 *         password: A8w5Wf
+*         email: kwozencroft14@dailymotion.com
+*         name: Kyle Wozencroft
+*         phone: +86-727-335-3913
+*         isActive: true
 *         isAdmin: false
 */
 
@@ -55,7 +54,7 @@
 * @swagger
 * tags:
 *   name: Users
-*   description: Endpoints to sign up, login and get users profile
+*   description: Endpoints for signing up, loginng, getting users profile and editing addresses
 */
 
 /**
@@ -75,7 +74,7 @@
 *         201:
 *           description: User registered
 *         409:
-*           description: Username already exists
+*           description: Username/Email already exists
 *         400:
 *           description: Bad request
 */
@@ -109,10 +108,10 @@
 /**
 * @swagger
 * paths:
-*   /api/users/:
+*   /api/users/all:
 *     get:
 *       security:
-*        - basicAuth: []
+*        - bearerAuth: []
 *       summary: Lists every user (only admins authorized)
 *       tags: [Users]
 *       responses:
@@ -127,10 +126,10 @@
 /**
 * @swagger
 * paths:
-*   /api/users/{userEmail}:
+*   /api/users/:
 *     get:
 *       security:
-*        - basicAuth: []
+*        - bearerAuth: []
 *       summary: Gets user profile (does not expose sensitive data)
 *       tags: [Users]
 *       parameters:

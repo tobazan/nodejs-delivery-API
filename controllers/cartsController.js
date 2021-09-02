@@ -5,6 +5,10 @@ const { PayMethod } = require('../models/paymethod')
 const { Cart } = require('../models/cart')
 const { CartItem } = require('../models/cart_item')
 
+const { db } = require('../models/index')
+const { Op } = require("sequelize")
+const {ValidationError} = require('sequelize')
+
 exports.getCartsByEmail = async (req, res) => {
 
     await Cart.findAll({
@@ -34,217 +38,275 @@ exports.getCarts = async (req, res) => {
     })
 }
 
-// exports.createCart = (req, res) => {
-//     try{
-//         const b64Credentials = req.headers.authorization.split(' ')[1]
-//         const credentials = Buffer.from(b64Credentials, 'base64').toString('ascii')
-//         const [_username, _password] = credentials.split(':')
+exports.createCart = async (req, res) => {
     
-//         const users_data = JSON.parse(fs.readFileSync(users_path, 'utf8'))
-//         const user = users_data.find(u => u.username === _username)
+    const user = req.user.id
+    const address = await Address.findOne({ where: {user_id: req.user.id} })
+    const payMethod = await PayMethod.findOne({ where: {isValid: true} })
+
+    theCart = await Cart.create({
+                        user_id: user,
+                        address_id: address.id,
+                        payMethod_id: payMethod.id,
+                        total_price:  0,
+                        status:  "NUEVO"
+    })
+
+    // with a new cart created, transaction to write every product in it
+    await db.transaction(async t => {
+                
+        let promises = []
+        let t_price = 0
+
+        req.body.products.forEach(prod => {
+            promises.push(
+                CartItem.create({
+                    cart_id: theCart.id,
+                    product_id: prod.product_id,
+                    quantity: prod.quantity,
+                    unit_price: prod.price,
+                    total_price: prod.quantity * prod.price
+                }, {transaction: t})
+            )
+            t_price = t_price + prod.quantity * prod.price
+        })
+
+        // update cart total price once cart items are created
+        promises.push(
+            Cart.update({
+                total_price: t_price
+            },{
+                where: { id: theCart.id }
+            }, {transaction: t})
+        )
         
-//         prods_data = JSON.parse(fs.readFileSync(products_path, 'utf8'))
-//         products = []
-        
-//         req.body.products.forEach(e => {
-//             p = prods_data.find(p => p.id === e.product_id)
-//             if(p != undefined) {
-//                 for(let i = 0; i < e.quantity; i++) {
-//                     products.push(p)
-//                 }
-//             }
-//         })
-       
-//         total_price = 0
-//         products.forEach(e => {
-//             total_price = total_price + e.price
-//         })
+        // unless every item is successfully created rollback the transaction
+        return Promise.all(promises)
+    })
+        .then(c_items => {
+            console.log('Cart and Items created --db commit')
+            res.status(201).json({msg:"Cart successfully created",
+                                cart_id: theCart.id,
+                                status: theCart.status,
+                                items: c_items})
+    })  .catch(err => {
+            console.log('Could not create every cart items --db rollback')
 
-//         methods_data = JSON.parse(fs.readFileSync(payMethods_path, 'utf8'))
-//         method_id = req.body.payMethod || 8
-//         payMethod = methods_data.find(m => m.id === method_id)
+            if(err instanceof ValidationError) {
+                res.status(400).json({ msg:"Bad Request", error:err })
+            }
+            res.status(500).json({msg:'Internal error while creating Cart Items', error:err})
+    })
+}
 
-//         address = req.body.dalivery_address || user.address
+exports.updateCartItems = async (req, res) => {
 
-//         carts_data = JSON.parse(fs.readFileSync(carts_path, 'utf8'))
+    const user = req.user.id
 
-//         newCart = {
-//             "id": (carts_data.length + 1),
-//             "user": user,
-//             "products": products,
-//             "total_price": total_price,
-//             "payMethod": payMethod,
-//             "delivery_address": address,
-//             "status": 'OPEN'
-//         }
- 
-//         carts_data.push(newCart)
-//         fs.writeFileSync(carts_path, JSON.stringify(carts_data), 'utf8')
-        
-//         return res.status(201).json({message: `Cart successfully created`, id: newCart.id})
-//     }
-//     catch(err){
-//         return res.status(400).json(err)
-//     }
-// }
+    theCart = await Cart.findOne({
+        where: { 
+            [Op.and]: [
+                {user_id: user},
+                {id: req.query.cart_id}
+            ]}
+    })
+    
+    if(!theCart.status === "NUEVO") {
+        res.status(404).json({message:"Cannot edit an already confirmed cart"})
+    }
 
-// exports.updateCartItems = (req, res) => {
-//     try{
-//         const carts_data = JSON.parse(fs.readFileSync(carts_path, 'utf8'))
-//         const cart_id = parseInt(req.query.cart_id)
-//         let cart = carts_data.find(c => c.id === cart_id) 
+    if(!theCart) {
+        return res.status(404).json({message:"Cart not found"})
+    } else { 
 
-//         if(cart['status'] != "OPEN"){
-//             return res.status(401).json({message:"unauthorized to edit this cart"})
-//         }
+        // transaction to delete old items, write new ones and update cart total price
+        await db.transaction(async t => {
+                    
+            let promises = []
+            let t_price = 0
 
-//         if(cart === undefined){
-//             return res.status(409).json({message:"cart not found"})
-//         }
+            // delete items
+            promises.push(
+                CartItem.destroy({
+                    where: { cart_id: theCart.id }},
+                    {transaction: t})
+            )        
+            
+            // write new ones
+            req.body.products.forEach(prod => {
+                promises.push(
+                    CartItem.create({
+                        cart_id: theCart.id,
+                        product_id: prod.product_id,
+                        quantity: prod.quantity,
+                        unit_price: prod.price,
+                        total_price: prod.quantity * prod.price
+                    }, {transaction: t})
+                )
+                t_price = t_price + prod.quantity * prod.price
+            })
 
-//         // change cart products and update total price
-//         prods_data = JSON.parse(fs.readFileSync(products_path, 'utf8'))
-        
-//         new_products = []
-//         req.body.products.forEach(e => {
-//             p = prods_data.find(p => p.id === e.product_id)
-//             if(p != undefined) {
-//                 for(let i = 0; i < e.quantity; i++) {
-//                     new_products.push(p)
-//                 }
-//             }
-//         })
-       
-//         new_price = 0
-//         new_products.forEach(e => {
-//             new_price = new_price + e.price
-//         })
+            // update cart total price once cart items are created
+            promises.push(
+                Cart.update({
+                    total_price: t_price
+                },{
+                    where: { id: theCart.id }
+                }, {transaction: t})
+            )
+            
+            // unless every promises is successfully resolved, t rollback
+            return Promise.all(promises)
+        })
+            .then(c_items => {
+                console.log('Cart and Items updated --db commit')
+                res.status(201).json({msg:"Cart successfully updated",
+                                    cart_id: theCart.id,
+                                    status: theCart.status,
+                                    items: c_items})
+        })  .catch(err => {
+                console.log('Could not update cart items --db rollback')
 
-//         cart['products'] = new_products
-//         cart['total_price'] = new_price
+                if(err instanceof ValidationError) {
+                    res.status(400).json({ msg:"Bad Request", error:err })
+                }
+                res.status(500).json({msg:'Internal error while updating Cart Items', error:err})
+        })
+    }    
+}
 
-//         // replace cart in json file
-//         carts_data.splice(cart_id - 1, 1, cart)
-//         fs.writeFileSync(carts_path, JSON.stringify(carts_data), 'utf8')
+exports.updateDeliveryAddress = async (req, res) => {
+    
+    const user = req.user.id
 
-//         return res.status(202).json({message:"cart items successfully updated"})
-//     }
-//     catch(err){
-//         return res.status(400).json(err)
-//     }
-// }
+    await Address.findOne({
+        where: {
+            [Op.and]: [
+                {user_id: user},
+                {id: req.query.address_id}
+            ]}
+        }).then(async a => {
+            await Cart.update({
+                address_id: a.id
+            },{
+                where: { 
+                    [Op.and]: [
+                        {user_id: user},
+                        {id: req.query.cart_id}
+                    ]}
+            })
+            .then(c => {
+                if(c.status === "NUEVO") {
+                    res.status(404).json({message:"Cannot edit an already confirmed cart"})
+                }
 
-// exports.updateDeliveryAddress = (req, res) => {
-//     try{
-//         const carts_data = JSON.parse(fs.readFileSync(carts_path, 'utf8'))
-//         const cart_id = parseInt(req.query.cart_id)
-//         let cart = carts_data.find(c => c.id === cart_id) 
+                if(c != 0){
+                    res.status(200).json({ 
+                        msg:`Delivery address successfully updated`,
+                        address: a,
+                        cart: c
+                    })
+                } else {
+                    res.status(404).json({ msg:`Not a valid cart for user ${user}`})
+                }
+            })
+            .catch(err => {
+                res.status(404).json({ msg:`Not a valid cart for user ${user}`, error:err })
+            })  
+        })
+        .catch(err => {
+            res.status(404).json({ msg:`Not a valid address for user ${user}`, error:err })
+        })
 
-//         if(cart === undefined){
-//             return res.status(409).json({message:"cart not found"})
-//         }
+}
 
-//         if(cart['status'] != "OPEN"){
-//             return res.status(401).json({message:"unauthorized to edit this cart"})
-//         }
+exports.updatePaymentMethod = async (req, res) => {
+    const user = req.user.id
 
-//         if(req.body.address != undefined){
-//             cart['delivery_address'] = req.body.address
-//         } else {
-//             res.status(400).json({message:"bad request"})
-//         }
+    await PayMethod.findOne({
+        where: {
+            [Op.and]: [
+                {isValid: true},
+                {id: req.query.payMethod_id}
+            ]}
+        }).then(async p => {
+            await Cart.update({
+                payMethod_id: p.id
+            },{
+                where: { 
+                    [Op.and]: [
+                        {user_id: user},
+                        {id: req.query.cart_id}
+                    ]}
+            })
+            .then(c => {
+                if(c.status === "NUEVO") {
+                    res.status(404).json({message:"Cannot edit an already confirmed cart"})
+                }
 
-//         carts_data.splice(cart_id - 1, 1, cart)
-//         fs.writeFileSync(carts_path, JSON.stringify(carts_data), 'utf8')
+                if(c != 0){
+                    res.status(200).json({ 
+                        msg:`Pay Method successfully updated`,
+                        method: p,
+                        cart: c
+                    })
+                } else {
+                    res.status(404).json({ msg:`Not a valid cart for user ${user}`})
+                }
+            })
+            .catch(err => {
+                res.status(404).json({ msg:`Not a valid cart for user ${user}`, error:err })
+            })  
+        })
+        .catch(err => {
+            res.status(404).json({ msg:`Not a valid pay method currently`, error:err })
+        })
 
-//         return res.status(202).json({message:"delivery address successfully updated"})
-//     }
-//     catch(err){
-//         return res.status(400).json(err)
-//     }
-// }
+}
 
-// exports.updatePaymentMethod = (req, res) => {
-//     try{
-//         const payMethods_data = JSON.parse(fs.readFileSync(payMethods_path, 'utf8')) 
-//         const carts_data = JSON.parse(fs.readFileSync(carts_path, 'utf8'))
-//         const cart_id = parseInt(req.query.cart_id)
-//         let cart = carts_data.find(c => c.id === cart_id) 
+exports.confirmCart = async (req, res) => {
+    const user = req.user.id
+    await Cart.update({
+        status: "p.id"
+    },{
+        where: { 
+            [Op.and]: [
+                {user_id: user},
+                {id: req.query.cart_id}
+            ]}
+    })
+    .then(c => {
+        if(c.status === "NUEVO") {
+            res.status(404).json({message:`Cannot confirm a cart with ${c.status} status`})
+        }
 
-//         if(cart['status'] != "OPEN"){
-//             return res.status(401).json({message:"unauthorized to edit this cart"})
-//         }
+        if(c != 0){
+            res.status(200).json({ 
+                msg:`Cart successfully confirmed`,
+                cart: c
+            })
+        } else {
+            res.status(404).json({ msg:`Not a valid cart for user ${user}`})
+        }
+    })
+    .catch(err => {
+        res.status(404).json({ msg:`Not a valid cart for user ${user}`, error:err })
+    })
+}
 
-//         if(cart === undefined){
-//             return res.status(409).json({message:"cart not found"})
-//         }
-
-//         if(req.body.payMethod_id != undefined){
-//             const method_id = parseInt(req.body.payMethod_id)
-//             const newMethod = payMethods_data.find(m => m.id === method_id)
-//             cart['payMethod'] = newMethod
-//         } else {
-//             res.status(400).json({message:"bad request"})
-//         }
-
-//         carts_data.splice(cart_id - 1, 1, cart)
-//         fs.writeFileSync(carts_path, JSON.stringify(carts_data), 'utf8')
-
-//         return res.status(202).json({message:"payment method successfully updated"})
-//     }
-//     catch(err){
-//         return res.status(400).json(err)
-//     }
-// }
-
-// exports.confirmCart = (req, res) => {
-//     try{
-//         const carts_data = JSON.parse(fs.readFileSync(carts_path, 'utf8'))
-//         const cart_id = parseInt(req.query.cart_id)
-//         let cart = carts_data.find(c => c.id === cart_id) 
-
-//         if(cart['status'] != "OPEN"){
-//             return res.status(401).json({message:"cart already confirmed", cart_satus: cart['status']})
-//         }
-
-//         if(cart === undefined){
-//             return res.status(409).json({message:"cart not found"})
-//         }
-
-//         cart['status'] = "CONFIRMED"
-
-//         carts_data.splice(cart_id - 1, 1, cart)
-//         fs.writeFileSync(carts_path, JSON.stringify(carts_data), 'utf8')
-
-//         return res.status(202).json({message:"cart successfully confirmed"})
-//     }
-//     catch(err){
-//         return res.status(400).json(err)
-//     }
-// }
-
-// exports.updateCartStatus = (req, res) => {
-//     try{
-//         const carts_data = JSON.parse(fs.readFileSync(carts_path, 'utf8'))
-//         const cart_id = parseInt(req.query.cart_id)
-//         let cart = carts_data.find(c => c.id === cart_id) 
-
-//         if(cart === undefined){
-//             return res.status(409).json({message:"cart not found"})
-//         }
-
-//         if(req.body.status != undefined){
-//             cart['status'] = req.body.status
-//         } else {
-//             res.status(400).json({message:"bad request"})
-//         }
-
-//         carts_data.splice(cart_id - 1, 1, cart)
-//         fs.writeFileSync(carts_path, JSON.stringify(carts_data), 'utf8')
-
-//         return res.status(202).json({message:"cart status successfully updated"})
-//     }
-//     catch(err){
-//         return res.status(400).json(err)
-//     }
-// }
+exports.updateCartStatus = async (req, res) => {
+    await Cart.update({
+        status: req.body.status
+    },{
+        where: { id: req.query.cart_id }
+    })
+    .then(c => {
+        res.status(200).json({ 
+            msg:`Cart status updated successfully`,
+            cart: c
+        })
+    })
+    .catch(err => {
+        res.status(404).json(err)
+    })
+}
