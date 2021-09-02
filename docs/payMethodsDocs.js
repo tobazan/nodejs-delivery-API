@@ -2,11 +2,10 @@
 * @swagger
 * components:
 *   securitySchemes:
-*     basicAuth:
+*     bearerAuth:
 *      type: http
-*      description: b64Auth
-*      scheme: basic
-*      in: header
+*      scheme: bearer
+*      bearerFormat: JWT
 */
 
 /**
@@ -47,7 +46,7 @@
 *   /api/payMethods/create:
 *     post:
 *       security:
-*        - basicAuth: []
+*        - bearerAuth: []
 *       summary: Creates a new payment method
 *       tags: [PayMethods]
 *       requestBody:
@@ -73,7 +72,7 @@
 *   /api/payMethods/:
 *     get:
 *       security:
-*        - basicAuth: []
+*        - bearerAuth: []
 *       summary: Lists every payment method
 *       tags: [PayMethods]
 *       responses:
@@ -95,7 +94,7 @@
 *   /api/payMethods/:
 *     get:
 *       security:
-*        - basicAuth: []
+*        - bearerAuth: []
 *       summary: Lists every payment method
 *       tags: [PayMethods]
 *       responses:
@@ -117,7 +116,7 @@
 *   /api/payMethods/{methodId}:
 *     delete:
 *       security:
-*        - basicAuth: []
+*        - bearerAuth: []
 *       summary: Deletes specified payment method
 *       tags: [PayMethods]
 *       parameters:
@@ -143,7 +142,7 @@
 *   /api/payMethods/{methodId}:
 *     put:
 *       security:
-*        - basicAuth: []
+*        - bearerAuth: []
 *       summary: Modifies the name and/or validity of the specified payment method
 *       tags: [PayMethods]
 *       parameters:

@@ -2,12 +2,12 @@
 * @swagger
 * components:
 *   securitySchemes:
-*     basicAuth:
+*     bearerAuth:
 *      type: http
-*      description: b64Auth
-*      scheme: basic
-*      in: header
+*      scheme: bearer
+*      bearerFormat: JWT
 */
+
 
 /**
 * @swagger
@@ -22,20 +22,16 @@
 *         id:
 *           type: integer
 *           description: The auto-generated id
-*         product:
+*         name:
 *           type: string
-*           description: Product name
+*           description: Products name
 *         price:
 *           type: float
 *           description: Unit price
-*         image:
-*           type: string
-*           description: URL for product image
 *       example:
 *         id: 3
-*         product: Salmon Steak - Cohoe 12 Oz
+*         name: Salmon Steak - Cohoe 12 Oz
 *         price: 655.32
-*         image: https://drive.google.com/file/d/1O5I1DMIh_1DQgh-fLedDzF3amHipl_Ya/view?usp=sharing
 */
 
 /**
@@ -51,7 +47,7 @@
 *   /api/products:
 *     post:
 *       security:
-*        - basicAuth: []
+*        - bearerAuth: []
 *       summary: Creates a new product
 *       tags: [Products]
 *       requestBody:
@@ -77,7 +73,7 @@
 *   /api/products/:
 *     get:
 *       security:
-*        - basicAuth: []
+*        - bearerAuth: []
 *       summary: Lists every product
 *       tags: [Products]
 *       responses:
@@ -99,7 +95,7 @@
 *   /api/products/{prodId}:
 *     delete:
 *       security:
-*        - basicAuth: []
+*        - bearerAuth: []
 *       summary: Deletes specified product
 *       tags: [Products]
 *       parameters:
@@ -125,7 +121,7 @@
 *   /api/products/{prodId}:
 *     put:
 *       security:
-*        - basicAuth: []
+*        - bearerAuth: []
 *       summary: Modifies the name, price and/or image URL of the specified product
 *       tags: [Products]
 *       parameters:

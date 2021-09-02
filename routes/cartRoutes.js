@@ -25,7 +25,7 @@ router.patch("/", [auth.authenticateToken, auth.isAdmin], cartsCtrl.updateCartSt
 // for users to modify delivery address (param cart_id and addres_id)
 router.patch("/deli_address", [auth.authenticateToken], cartsCtrl.updateDeliveryAddress)
 
-// for users to modify payment method (param cart_id and payMethod)
+// for users to modify payment method (param cart_id and payMethod_id)
 router.patch("/payment", [auth.authenticateToken], cartsCtrl.updatePaymentMethod)
 
 module.exports = router;
