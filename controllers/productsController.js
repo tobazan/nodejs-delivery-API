@@ -1,7 +1,15 @@
 const { Product } = require('../models/product')
 const {ValidationError} = require('sequelize')
+
+const elastic_host = process.env.ELASTIC_HOST
+const elastic_port = process.env.ELASTIC_PORT
+const elastic_password = process.env.ELASTIC_PASSWORD
+
 const redis = require('redis')
-const client = redis.createClient()
+const client = redis.createClient({
+    host: elastic_host,
+    port: elastic_port
+})
 
 exports.listProducts = async (req, res) => {
 
