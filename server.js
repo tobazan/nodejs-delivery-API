@@ -54,8 +54,8 @@ app.use("/api/carts", cartsRoutes)
 
 server = app.listen(port, async () => {
 	
-		console.log(`Server escuchando en puerto http://localhost:${port}/api`)
-		console.log(`Swagger UI en http://localhost:5000/api-docs`)
+		console.log(`Server escuchando en --> http://localhost:${port}/api`)
+		console.log(`Swagger UI en --> https://dbpsbx2e83s2m.cloudfront.net/`)
 		try {
 			await db.authenticate()
 			console.log('Conectado a BD exitosamente')
