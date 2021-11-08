@@ -4,6 +4,7 @@ require('./models/associations')
 
 const helmet = require('helmet')
 const morgan = require('morgan')
+const cors = require('cors')
 
 require('dotenv').config()
 const port = process.env.PORT || 8000
@@ -12,20 +13,6 @@ const port = process.env.PORT || 8000
 // const swaggerJsDoc = require("swagger-jsdoc")
 
 // const options = {
-// 	definition: {
-// 		openapi: "3.0.0",
-// 		info: {
-// 			title: "Deli API",
-// 			version: "1.0.2",
-// 			description: "A food ecom simple Node JS API",
-// 		},
-// 		servers: [
-// 			{
-// 				url: `http://localhost:5000`,
-// 			},
-// 		],
-// 	},
-// 	apis: ["./docs/*.js"],
 // };
 
 // const specs = swaggerJsDoc(options);
@@ -42,6 +29,8 @@ const app = express()
 app.use(express.json())
 app.use(helmet())
 app.use(morgan('dev'))
+app.use(cors()) // to avoid CORS issue on Swagger Client
+
 
 // Routes
 // -----------------------------------------
@@ -54,8 +43,10 @@ app.use("/api/carts", cartsRoutes)
 
 server = app.listen(port, async () => {
 	
+		console.log(`DELI API - modo ${process.env.NODE_ENV || 'development'}\n--------------------\n`)
 		console.log(`Server escuchando en --> http://localhost:${port}/api`)
-		console.log(`Swagger UI en --> https://dbpsbx2e83s2m.cloudfront.net/`)
+		console.log(`A traves del ALB --> http://balancer-deliapi-1907259002.sa-east-1.elb.amazonaws.com/`)
+		console.log(`Swagger UI en --> https://dbpsbx2e83s2m.cloudfront.net/\n`)
 		try {
 			await db.authenticate()
 			console.log('Conectado a BD exitosamente')

@@ -1,13 +1,19 @@
 # PROYECTO API Curso Backend Web
 
-## SPRINT 02
+## SPRINT 03
 ___
 
 #### DESCRIPCION
 
-La idea es desarrollar una API para un negocio llamado Deli que comercializara comida a traves de esta aplicacion web.
+En este sprint con nuestra API ya funcionando en local, la idea sera desplegarla en infraestructura cloud de AWS.
 
-Para este 2do sprint la idea es persistir la informacion en una base de datos *(PostgreSQL en este caos)*, sumar una capa de cache para los endpoints del catalogo de productos, autenticacion con JWT y una rutina de test para el registro de usuarios.
+En una misma VPC tendremos 2 subnets publicas para el Grupo de Autoescalado que servira nuestra API y una 3ra subnet privada donde tendremos nuestra BD en RDS. 
+
+La capa de cache para los endpoints de productos estara en Elastic Cache
+
+El grupo de autoescalado tendra en frente un balanceador de carga tipo ALB
+
+A su vez, en CloudFront serviremos la documentacion Swagger como cliente estatico
 ___
 
 #### ESTRUCTURA DEL PROYECTO
@@ -25,21 +31,3 @@ ___
 ├── tests/              # rutina de test unitario para signup
 └── server.js                       
 ```
-___
-
-#### INSTRUCCIONES DE INSTALACION
-0.  Se asume que ya tiene instalado **PostgreSQL Server** y **Redis**
-1.  Clone este repositorio en un directorio local
-2.  Instale las dependencias del package.json ejecutando `npm install`
-3.  Defina las variables de entorno que tomara `config.js` para conectar con la BD
-4.  Corra los migrations y seeders ejecutando
-    1.  `npx sequelize-cli db:migrate`
-    2.  `npx sequelize-cli db:seed --seed users`
-    3.  `npx sequelize-cli db:seed --seed addresses`
-    4.  `npx sequelize-cli db:seed --seed payMethods`
-    5.  `npx sequelize-cli db:seed --seed products`
-    6.  `npx sequelize-cli db:seed --seed carts`
-    7.  `npx sequelize-cli db:seed --seed cartItems`
-5.  Inicie el servidor ejecutando `npm run dev` (usamos **nodemon**)
-6.  Dirijase en su navegador a la ruta de la documentacion  [http://localhost:8000/api-docs](http://localhost:8000/api-docs)
-7.  Pruebe los endpoints

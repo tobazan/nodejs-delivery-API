@@ -1,9 +1,9 @@
 const { Product } = require('../models/product')
 const {ValidationError} = require('sequelize')
 
-const elastic_host = process.env.ELASTIC_HOST
-const elastic_port = process.env.ELASTIC_PORT
-const elastic_password = process.env.ELASTIC_PASSWORD
+require('dotenv').config()
+const elastic_host = process.env.PROD_ELASTIC_HOST || process.env.DEV_ELASTIC_HOST
+const elastic_port = process.env.PROD_ELASTIC_PORT || process.env.DEV_ELASTIC_PORT
 
 const redis = require('redis')
 const client = redis.createClient({
