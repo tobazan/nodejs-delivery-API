@@ -7,13 +7,13 @@ ___
 
 En este sprint con nuestra API ya funcionando en local, la idea sera desplegarla en infraestructura cloud de AWS.
 
-En una misma VPC tendremos 2 subnets publicas para el Grupo de Autoescalado que servira nuestra API y una 3ra subnet privada donde tendremos nuestra BD en RDS. 
+En una misma **VPC** tendremos 2 subnets *publicas* para el **Grupo de Autoescalado** que servira nuestra API y una 3ra subnet *privada* donde tendremos nuestra BD en **RDS**. 
 
-La capa de cache para los endpoints de productos estara en Elastic Cache
+La capa de cache para los endpoints de productos estara en **Elastic Cache**
 
-El grupo de autoescalado tendra en frente un balanceador de carga tipo ALB
+El grupo de autoescalado tendra en frente un balanceador de carga tipo **ALB** que recibira y distribuira las peticiones realizadas a nuestro dominio en **Route 53**
 
-A su vez, en CloudFront serviremos la documentacion Swagger como cliente estatico
+A su vez, en **CloudFront** serviremos la documentacion Swagger como cliente estatico
 ___
 
 #### ESTRUCTURA DEL PROYECTO

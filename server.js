@@ -45,7 +45,7 @@ server = app.listen(port, async () => {
 	
 		console.log(`DELI API - modo ${process.env.NODE_ENV || 'development'}\n--------------------\n`)
 		console.log(`Server escuchando en --> http://localhost:${port}/api`)
-		console.log(`A traves del ALB --> http://balancer-deliapi-1907259002.sa-east-1.elb.amazonaws.com/`)
+		console.log(`A traves del ALB --> http://www.mebdeliap.cf/api`)
 		console.log(`Swagger UI en --> https://dbpsbx2e83s2m.cloudfront.net/\n`)
 		try {
 			await db.authenticate()
@@ -54,7 +54,7 @@ server = app.listen(port, async () => {
 			console.error('No pudo conectarse a la BD: ', error)}
 		})
 
-// to avoid 502 Bad Gateway given ELB -> nginx -> server
+// to avoid 502 Bad Gateway - ELB -> nginx -> server
 server.keepAliveTimeout = 65000
 server.headersTimeout = 65000
 
