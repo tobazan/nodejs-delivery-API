@@ -18,7 +18,7 @@ ___
 
 #### MAPA DE LA ARQUITECTURA DESPLEGADA
 
-![mapa_arq] (arquitectura_sp03_bazan.JPG)
+<img src="arquitectura_sp03_bazan.JPG" alt="mapa arq en AWS" width="400" height="560">
 
 ___
 
