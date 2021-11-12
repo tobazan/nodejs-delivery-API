@@ -4,7 +4,7 @@ require('./models/associations')
 
 const helmet = require('helmet')
 const morgan = require('morgan')
-const cors = require('cors')
+//const cors = require('cors')
 
 require('dotenv').config()
 const port = process.env.PORT || 8000
@@ -29,7 +29,7 @@ const app = express()
 app.use(express.json())
 app.use(helmet())
 app.use(morgan('dev'))
-app.use(cors()) // to avoid CORS issue on Swagger Client
+//app.use(cors()) - to avoid CORS issue on Swagger Client
 
 
 // Routes
@@ -42,17 +42,18 @@ app.use("/api/carts", cartsRoutes)
 
 
 server = app.listen(port, async () => {
-	
-		console.log(`DELI API - modo ${process.env.NODE_ENV || 'development'}\n--------------------\n`)
-		console.log(`Server escuchando en --> http://localhost:${port}/api`)
-		console.log(`A traves del ALB --> http://www.mebdeliap.cf/api`)
-		console.log(`Swagger UI en --> https://dbpsbx2e83s2m.cloudfront.net/\n`)
-		try {
-			await db.authenticate()
-			console.log('Conectado a BD exitosamente')
-		} catch (error) {
-			console.error('No pudo conectarse a la BD: ', error)}
-		})
+
+	console.log(`DELI API - modo ${process.env.NODE_ENV || 'development'}\n--------------------\n`)
+	console.log(`Server escuchando en --> http://localhost:${port}/api`)
+	console.log(`A traves del ALB --> http://www.mebdeliap.cf/api`)
+	console.log(`Swagger UI en --> https://dbpsbx2e83s2m.cloudfront.net/\n`)
+	try {
+		await db.authenticate()
+		console.log('Conectado a BD exitosamente')
+	} catch (error) {
+		console.error('No pudo conectarse a la BD: ', error)
+	}
+})
 
 // to avoid 502 Bad Gateway - ELB -> nginx -> server
 server.keepAliveTimeout = 65000
