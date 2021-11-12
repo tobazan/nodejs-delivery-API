@@ -16,6 +16,12 @@ El grupo de autoescalado tendra en frente un balanceador de carga tipo **ALB** q
 A su vez, en **CloudFront** serviremos la documentacion Swagger como cliente estatico
 ___
 
+#### MAPA DE LA ARQUITECTURA DESPLEGADA
+
+![mapa_arq] (arquitectura_sp03_bazan.JPG)
+
+___
+
 #### ESTRUCTURA DEL PROYECTO
 
 ```
