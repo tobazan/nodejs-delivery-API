@@ -6,7 +6,9 @@ const helmet = require('helmet')
 const morgan = require('morgan')
 //const cors = require('cors')
 
-require('dotenv').config()
+const path = require('path'); 
+require('dotenv').config({ path: path.join(__dirname, '.env') });
+//require('dotenv').config()
 const port = process.env.PORT || 8000
 
 // const swaggerUI = require("swagger-ui-express")

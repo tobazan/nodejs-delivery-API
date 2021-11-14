@@ -1,14 +1,16 @@
 const { Product } = require('../models/product')
 const {ValidationError} = require('sequelize')
 
-require('dotenv').config()
-const elastic_host = process.env.PROD_ELASTIC_HOST || process.env.DEV_ELASTIC_HOST
-const elastic_port = process.env.PROD_ELASTIC_PORT || process.env.DEV_ELASTIC_PORT
+const path = require('path'); 
+require('dotenv').config({ path: path.join(__dirname, '../.env') });
+//require('dotenv').config()
+const elastic_host = process.env.PROD_ELASTIC_HOST
+const elastic_port = process.env.PROD_ELASTIC_PORT
 
 const redis = require('redis')
 const client = redis.createClient({
-    host: elastic_host,
-    port: elastic_port
+	host: elastic_host,
+    	port: elastic_port
 })
 
 exports.listProducts = async (req, res) => {
