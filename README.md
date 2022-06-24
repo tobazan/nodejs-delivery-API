@@ -1,24 +1,15 @@
 # PROYECTO API Curso Backend Web
 
-## SPRINT 03
+## SPRINT 04
 ___
 
-#### DESCRIPCION
+### DESCRIPCION
 
-En este sprint con nuestra API ya funcionando en local, la idea sera desplegarla en infraestructura cloud de AWS.
+Luego de haberla desplegado en la nube de AWS en el sprint anterior, ahora el objetivo es **containarizar** la API para simplificar futuros deploy
 
-En una misma **VPC** tendremos 2 subnets *publicas* para el **Grupo de Autoescalado** que servira nuestra API y una 3ra subnet *privada* donde tendremos nuestra BD en **RDS**. 
+> **Docker Compose** es una herramienta que permite simplificar el uso de Docker. A partir de archivos YAML es mas sencillo crear contendores, conectarlos, habilitar puertos, volumenes, etc
 
-La capa de cache para los endpoints de productos estara en **Elastic Cache**
-
-El grupo de autoescalado tendra en frente un balanceador de carga tipo **ALB** que recibira y distribuira las peticiones realizadas a nuestro dominio en **Route 53**
-
-A su vez, en **CloudFront** serviremos la documentacion Swagger como cliente estatico
-___
-
-#### MAPA DE LA ARQUITECTURA DESPLEGADA
-
-<img src="arquitectura_sp03_bazan.JPG" alt="mapa arq en AWS" width="560" height="400">
+> Permite mediante archivos YAML para poder instruir al Docker Engine a realizar tareas, programaticamente. Y esta es la clave, la facilidad para dar una serie de instrucciones, y luego repetirlas en diferentes ambientes.
 
 ___
 
